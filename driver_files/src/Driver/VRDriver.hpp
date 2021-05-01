@@ -8,7 +8,7 @@
 #include <Driver/IVRDriver.hpp>
 #include <Driver/IVRDevice.hpp>
 
-namespace ExampleDriver {
+namespace VRTri {
     class VRDriver : public IVRDriver {
     public:
 

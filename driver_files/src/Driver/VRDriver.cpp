@@ -1,42 +1,31 @@
 #include "VRDriver.hpp"
-#include <Driver/HMDDevice.hpp>
 #include <Driver/TrackerDevice.hpp>
-#include <Driver/ControllerDevice.hpp>
-#include <Driver/TrackingReferenceDevice.hpp>
 
-vr::EVRInitError ExampleDriver::VRDriver::Init(vr::IVRDriverContext* pDriverContext)
+vr::EVRInitError VRTri::VRDriver::Init(vr::IVRDriverContext* pDriverContext)
 {
     // Perform driver context initialisation
     if (vr::EVRInitError init_error = vr::InitServerDriverContext(pDriverContext); init_error != vr::EVRInitError::VRInitError_None) {
         return init_error;
     }
 
-    Log("Activating ExampleDriver...");
-
-    // Add a HMD
-    this->AddDevice(std::make_shared<HMDDevice>("Example_HMDDevice"));
-
-    // Add a couple controllers
-    this->AddDevice(std::make_shared<ControllerDevice>("Example_ControllerDevice_Left", ControllerDevice::Handedness::LEFT));
-    this->AddDevice(std::make_shared<ControllerDevice>("Example_ControllerDevice_Right", ControllerDevice::Handedness::RIGHT));
+    Log("Activating VRTri...");
 
     // Add a tracker
-    this->AddDevice(std::make_shared<TrackerDevice>("Example_TrackerDevice"));
+    this->AddDevice(std::make_shared<TrackerDevice>("TrackerDevice1"));
+    this->AddDevice(std::make_shared<TrackerDevice>("TrackerDevice2"));
+    this->AddDevice(std::make_shared<TrackerDevice>("TrackerDevice3"));
 
-    // Add a couple tracking references
-    this->AddDevice(std::make_shared<TrackingReferenceDevice>("Example_TrackingReference_A"));
-    this->AddDevice(std::make_shared<TrackingReferenceDevice>("Example_TrackingReference_B"));
 
-    Log("ExampleDriver Loaded Successfully");
+    Log("VRTri Loaded Successfully (Driver-side)");
 
 	return vr::VRInitError_None;
 }
 
-void ExampleDriver::VRDriver::Cleanup()
+void VRTri::VRDriver::Cleanup()
 {
 }
 
-void ExampleDriver::VRDriver::RunFrame()
+void VRTri::VRDriver::RunFrame()
 {
     // Collect events
     vr::VREvent_t event;
@@ -57,45 +46,39 @@ void ExampleDriver::VRDriver::RunFrame()
         device->Update();
 }
 
-bool ExampleDriver::VRDriver::ShouldBlockStandbyMode()
+bool VRTri::VRDriver::ShouldBlockStandbyMode()
 {
     return false;
 }
 
-void ExampleDriver::VRDriver::EnterStandby()
+void VRTri::VRDriver::EnterStandby()
 {
 }
 
-void ExampleDriver::VRDriver::LeaveStandby()
+void VRTri::VRDriver::LeaveStandby()
 {
 }
 
-std::vector<std::shared_ptr<ExampleDriver::IVRDevice>> ExampleDriver::VRDriver::GetDevices()
+std::vector<std::shared_ptr<VRTri::IVRDevice>> VRTri::VRDriver::GetDevices()
 {
     return this->devices_;
 }
 
-std::vector<vr::VREvent_t> ExampleDriver::VRDriver::GetOpenVREvents()
+std::vector<vr::VREvent_t> VRTri::VRDriver::GetOpenVREvents()
 {
     return this->openvr_events_;
 }
 
-std::chrono::milliseconds ExampleDriver::VRDriver::GetLastFrameTime()
+std::chrono::milliseconds VRTri::VRDriver::GetLastFrameTime()
 {
     return this->frame_timing_;
 }
 
-bool ExampleDriver::VRDriver::AddDevice(std::shared_ptr<IVRDevice> device)
+bool VRTri::VRDriver::AddDevice(std::shared_ptr<IVRDevice> device)
 {
     vr::ETrackedDeviceClass openvr_device_class;
     // Remember to update this switch when new device types are added
     switch (device->GetDeviceType()) {
-        case DeviceType::CONTROLLER:
-            openvr_device_class = vr::ETrackedDeviceClass::TrackedDeviceClass_Controller;
-            break;
-        case DeviceType::HMD:
-            openvr_device_class = vr::ETrackedDeviceClass::TrackedDeviceClass_HMD;
-            break;
         case DeviceType::TRACKER:
             openvr_device_class = vr::ETrackedDeviceClass::TrackedDeviceClass_GenericTracker;
             break;
@@ -111,7 +94,7 @@ bool ExampleDriver::VRDriver::AddDevice(std::shared_ptr<IVRDevice> device)
     return result;
 }
 
-ExampleDriver::SettingsValue ExampleDriver::VRDriver::GetSettingsValue(std::string key)
+VRTri::SettingsValue VRTri::VRDriver::GetSettingsValue(std::string key)
 {
     vr::EVRSettingsError err = vr::EVRSettingsError::VRSettingsError_None;
     int int_value = vr::VRSettings()->GetInt32(settings_key_.c_str(), key.c_str(), &err);
@@ -139,23 +122,23 @@ ExampleDriver::SettingsValue ExampleDriver::VRDriver::GetSettingsValue(std::stri
     return SettingsValue();
 }
 
-void ExampleDriver::VRDriver::Log(std::string message)
+void VRTri::VRDriver::Log(std::string message)
 {
     std::string message_endl = message + "\n";
     vr::VRDriverLog()->Log(message_endl.c_str());
 }
 
-vr::IVRDriverInput* ExampleDriver::VRDriver::GetInput()
+vr::IVRDriverInput* VRTri::VRDriver::GetInput()
 {
     return vr::VRDriverInput();
 }
 
-vr::CVRPropertyHelpers* ExampleDriver::VRDriver::GetProperties()
+vr::CVRPropertyHelpers* VRTri::VRDriver::GetProperties()
 {
     return vr::VRProperties();
 }
 
-vr::IVRServerDriverHost* ExampleDriver::VRDriver::GetDriverHost()
+vr::IVRServerDriverHost* VRTri::VRDriver::GetDriverHost()
 {
     return vr::VRServerDriverHost();
 }

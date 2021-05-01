@@ -1,17 +1,20 @@
 #include "TrackerDevice.hpp"
-#include <Windows.h>
+#define WIN32_LEAN_AND_MEAN
+// Windows Header Files:
+#include <windows.h>
 
-ExampleDriver::TrackerDevice::TrackerDevice(std::string serial):
+
+VRTri::TrackerDevice::TrackerDevice(std::string serial):
     serial_(serial)
 {
 }
 
-std::string ExampleDriver::TrackerDevice::GetSerial()
+std::string VRTri::TrackerDevice::GetSerial()
 {
     return this->serial_;
 }
 
-void ExampleDriver::TrackerDevice::Update()
+void VRTri::TrackerDevice::Update()
 {
     if (this->device_index_ == vr::k_unTrackedDeviceIndexInvalid)
         return;
@@ -40,6 +43,9 @@ void ExampleDriver::TrackerDevice::Update()
 
     // Setup pose for this frame
     auto pose = IVRDevice::MakeDefaultPose();
+
+
+    // WHERE CUSTOM PIPELINE MUST BE PROGRAMMED V V V V
 
     // Find a HMD
     auto devices = GetDriver()->GetDevices();
@@ -76,17 +82,17 @@ void ExampleDriver::TrackerDevice::Update()
     this->last_pose_ = pose;
 }
 
-DeviceType ExampleDriver::TrackerDevice::GetDeviceType()
+DeviceType VRTri::TrackerDevice::GetDeviceType()
 {
     return DeviceType::TRACKER;
 }
 
-vr::TrackedDeviceIndex_t ExampleDriver::TrackerDevice::GetDeviceIndex()
+vr::TrackedDeviceIndex_t VRTri::TrackerDevice::GetDeviceIndex()
 {
     return this->device_index_;
 }
 
-vr::EVRInitError ExampleDriver::TrackerDevice::Activate(uint32_t unObjectId)
+vr::EVRInitError VRTri::TrackerDevice::Activate(uint32_t unObjectId)
 {
     this->device_index_ = unObjectId;
 
@@ -130,27 +136,27 @@ vr::EVRInitError ExampleDriver::TrackerDevice::Activate(uint32_t unObjectId)
     return vr::EVRInitError::VRInitError_None;
 }
 
-void ExampleDriver::TrackerDevice::Deactivate()
+void VRTri::TrackerDevice::Deactivate()
 {
     this->device_index_ = vr::k_unTrackedDeviceIndexInvalid;
 }
 
-void ExampleDriver::TrackerDevice::EnterStandby()
+void VRTri::TrackerDevice::EnterStandby()
 {
 }
 
-void* ExampleDriver::TrackerDevice::GetComponent(const char* pchComponentNameAndVersion)
+void* VRTri::TrackerDevice::GetComponent(const char* pchComponentNameAndVersion)
 {
     return nullptr;
 }
 
-void ExampleDriver::TrackerDevice::DebugRequest(const char* pchRequest, char* pchResponseBuffer, uint32_t unResponseBufferSize)
+void VRTri::TrackerDevice::DebugRequest(const char* pchRequest, char* pchResponseBuffer, uint32_t unResponseBufferSize)
 {
     if (unResponseBufferSize >= 1)
         pchResponseBuffer[0] = 0;
 }
 
-vr::DriverPose_t ExampleDriver::TrackerDevice::GetPose()
+vr::DriverPose_t VRTri::TrackerDevice::GetPose()
 {
     return last_pose_;
 }
